@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="OpenCreativity.ico">
+    <title>Text Summarization with Hugging Face API</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url('https://cdn.pixabay.com/photo/2024/09/20/16/03/fire-9061852_640.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 48px;
+            text-align: center;
+            color: #f5b342;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.9);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 15px;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            outline: none;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #ff9800;
+            cursor: pointer;
+            color: black;
+            font-weight: bold;
+            font-size: 18px;
+            width: 100%;
+            letter-spacing: 2px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.7);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e68900;
+            transform: translateY(-2px);
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 1.2em;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.7);
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Text Summarizer</h1>
+    <div class="container">
+        <p>Enter text to summarize:</p>
+        <textarea id="input-text" placeholder="Enter your text here..."></textarea>
+        <button onclick="summarizeText()">Summarize</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        async function summarizeText() {
+            const inputText = document.getElementById('input-text').value;
+
+            // Check if input text is empty
+            if (!inputText.trim()) {
+                document.getElementById('output').innerText = "Please enter some text to summarize!";
+                return;
+            }
+
+            // Hugging Face API URL and headers
+            const API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn";
+            const headers = {
+                "Authorization": "Bearer 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",
+                "Content-Type": "application/json"
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify({ inputs: inputText })
+                });
+
+                const data = await response.json();
+                
+                // Display the summary in the output div
+                document.getElementById('output').innerText = data[0]?.summary_text || "No summary could be generated.";
+            } catch (error) {
+                document.getElementById('output').innerText = "An error occurred while summarizing the text.";
+                console.error('Error:', error);
+            }
+        }
+    </script>
+
+</body>
+</html>
