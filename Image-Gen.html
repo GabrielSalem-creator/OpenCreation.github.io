@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="twitter:title" content="OpenCreativity" />
-    <meta name="twitter:description" content=
-"Unleashing boundless creativity, where ideas ignite, connect, and inspire like never before—limitless, vibrant, and unforgettable." />
+    <meta name="twitter:description" content="Unleashing boundless creativity, where ideas ignite, connect, and inspire like never before—limitless, vibrant, and unforgettable." />
     <meta name="twitter:image" content="OpenCreativity.png" />
     <link rel="icon" type="image/ico" href="OpenCreativity.ico">
     <title>Virtual Van Gogh</title>
@@ -120,6 +119,16 @@
                 width: 90%;
             }
         }
+
+        /* New styles for loading label */
+        #loadingLabel {
+            font-size: 24px;
+            font-weight: bold;
+            color: #61dafb;
+            display: none; /* Initially hidden */
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -127,28 +136,29 @@
     <div class="input-container">
         <input type="text" id="promptInput" placeholder="Enter your prompt..." />
         <button id="generateButton">Generate Image</button>
-        
     </div>
 
+    <div id="loadingLabel">Generating image, please wait...</div> <!-- Loading Label -->
     <div id="imageContainer"></div>
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5059241821119554"
      crossorigin="anonymous"></script>
-<!-- Ad2 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-5059241821119554"
-     data-ad-slot="2955538306"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+    <!-- Ad2 -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5059241821119554"
+         data-ad-slot="2955538306"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    
     <script>
         async function queryAPI(prompt) {
             const API_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
             const headers = {
                 "Authorization": "Bearer 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",
-              //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
                 "Content-Type": "application/json",
             };
 
@@ -180,7 +190,11 @@
 
         document.getElementById("generateButton").addEventListener("click", async () => {
             const prompt = document.getElementById("promptInput").value;
+            const loadingLabel = document.getElementById("loadingLabel");
+            loadingLabel.style.display = "block"; // Show loading label
+
             const imageBlob = await queryAPI(prompt);
+            loadingLabel.style.display = "none"; // Hide loading label after the request
 
             const imageContainer = document.getElementById("imageContainer");
             imageContainer.innerHTML = ""; // Clear previous images
