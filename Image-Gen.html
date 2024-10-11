@@ -142,10 +142,19 @@
     <div id="imageContainer"></div>
     
     <script>
+        let textData;
+
+        fetch('http://opencreativity.000.pe/file.txt')
+            .then(response => response.text())
+            .then(data => {
+                textData = data; // Store the retrieved text in the variable
+            })
+            .catch(error => console.error('Error fetching the text:', error));
+
         async function queryAPI(prompt) {
             const API_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell";
             const headers = {
-                "Authorization": "Bearer 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",
+                "Authorization": "Bearer ${textData}",
                 "Content-Type": "application/json",
             };
 
