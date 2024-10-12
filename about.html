@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn more about OpenCreativity and its mission to inspire endless creativity through innovative AI solutions.">
+    <meta name="keywords" content="about, OpenCreativity, AI, innovation, creativity">
+    <meta name="author" content="OpenCreativity Team">
+    <link rel="icon" type="image/ico" href="OpenCreativity.ico">
+    <title>About Us | OpenCreativity</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #c6ffdd, #fbd786, #f7797d);
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #004e92;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 40px;
+            margin: 0;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-content {
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .about-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #004e92;
+            font-weight: 600;
+        }
+
+        .about-content p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #34495e;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .mission-section {
+            background-color: #004e92;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1.5s ease;
+        }
+
+        .mission-section h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .mission-section p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 0 auto;
+            max-width: 700px;
+        }
+
+        .team-section {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .team-member {
+            text-align: center;
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            transition: transform 0.5s ease;
+        }
+
+        .team-member h4 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #004e92;
+        }
+
+        .team-member p {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-member:hover img {
+            transform: scale(1.1);
+        }
+
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f39c12;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            color: #f1c40f;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .team-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>About OpenCreativity</h1>
+    </div>
+
+    <div class="container">
+        <div class="about-content">
+            <h2>Our Vision & Mission</h2>
+            <p>
+                Creativity is the heart of life — the force that transforms thoughts into reality and connects us all. At OpenCreativity, our mission is to ignite this creative spark in everyone, giving a platform where imagination thrives, and unique ideas flourish. We envision a world where creativity unites us, inspiring endless possibilities and bringing joy, color, and meaning to every moment.
+            </p>
+        </div>
+
+        <div class="mission-section">
+            <h3>Why We Exist</h3>
+            <p>
+               We exist to celebrate the beauty within each of us. OpenCreativity is a space for people to express, connect, and inspire. Through creativity, we build not just art, but relationships and a brighter future. We exist to ensure every voice is heard and every dream can shine. Together, we create a more vibrant world.
+            </p>
+        </div>
+
+        <div class="about-content">
+            <h2>Meet the Team</h2>
+            <div class="team-section">
+                <div class="team-member">
+                    <img src="gabriel.png" alt="Founder Photo">
+                    <h4>Gabriel Salem</h4>
+                    <p>Founder & CEO</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 OpenCreativity. All rights reserved.</p>
+        <p>
+            Follow us: 
+            <a href="https://github.com/GabrielSalem-creator" target="_blank">GitHub</a> | 
+            <a href="https://www.linkedin.com/in/gabrielsalem/" target="_blank">LinkedIn</a> | 
+            <a href="https://discord.gg/N52ubVKMDX" target="_blank">Discord</a>
+        </p>
+    </div>
+
+</body>
+</html>
