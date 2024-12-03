@@ -10,7 +10,6 @@
     <title>AI CV Formatter</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Styling for a professional and responsive appearance */
         body {
             background-image: url('https://cdn.pixabay.com/photo/2018/09/23/18/30/drop-3698073_1280.jpg');
             background-size: cover;
@@ -134,38 +133,51 @@
         </div>
     </div>
 
-    <!-- Loading Spinner Overlay -->
     <div class="loading-spinner-overlay" id="loading-spinner">
         <div class="loading-spinner"></div>
     </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+    // Configure the PDF.js worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script>
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-            const textContent = await pdfDoc.getTextContent();
-            return textContent.items.map(item => item.str).join(' ');
+
+    async function extractTextFromPDF(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let extractedText = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(" ");
+            extractedText += pageText + "\n";
         }
 
-        async function extractTextFromDocx(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const result = await mammoth.extractRawText({ arrayBuffer });
-            return result.value;
-        }
+        return extractedText;
+    }
 
-        async function getCVText(file) {
-            const fileType = file.type;
-            if (fileType === "application/pdf") {
-                return await extractTextFromPDF(file);
-            } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-                return await extractTextFromDocx(file);
-            } else {
-                displayError("Unsupported file format. Please upload a PDF or Word document.");
-                return "";
-            }
+    async function extractTextFromDocx(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        return result.value;
+    }
+
+    async function getCVText(file) {
+        const fileType = file.type;
+        if (fileType === "application/pdf") {
+            return await extractTextFromPDF(file);
+        } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+            return await extractTextFromDocx(file);
+        } else {
+            displayError("Unsupported file format. Please upload a PDF or Word document.");
+            return "";
         }
+    }
+
 
         function displayError(message) {
             const errorMessageDiv = document.getElementById("error-message");
@@ -180,7 +192,7 @@
         async function generateFormattedCV() {
             const jobDescription = document.getElementById("job-description").value;
             const fileInput = document.getElementById("cv-upload");
-            document.getElementById("error-message").textContent = ""; // Clear previous errors
+            document.getElementById("error-message").textContent = ""; 
 
             if (!jobDescription) {
                 displayError("Please enter a job description.");
