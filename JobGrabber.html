@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="twitter:title" content="OpenCreativity" />
-    <meta name="twitter:description" content="Unleashing boundless creativity, where ideas ignite, connect, and inspire like never before—limitless, vibrant, and unforgettable." />
-    <meta name="twitter:image" content="OpenCreativity.png" />
-    <link rel="icon" type="image/ico" href="OpenCreativity.ico">
     <title>AI CV Formatter</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -138,47 +134,22 @@
     <div class="loading-spinner-overlay" id="loading-spinner">
         <div class="loading-spinner"></div>
     </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script>
-    // Configure the PDF.js worker source
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script>
-
-
-    async function extractTextFromPDF(file) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        let extractedText = "";
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const pageText = textContent.items.map(item => item.str).join(" ");
-            extractedText += pageText + "\n";
+             pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+async function extractTextFromPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let text = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(" ") + "\n";
+            }
+            return text;
         }
-
-        return extractedText;
-    }
-
-    async function extractTextFromDocx(file) {
-        const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
-        return result.value;
-    }
-
-    async function getCVText(file) {
-        const fileType = file.type;
-        if (fileType === "application/pdf") {
-            return await extractTextFromPDF(file);
-        } else if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-            return await extractTextFromDocx(file);
-        } else {
-            displayError("Unsupported file format. Please upload a PDF or Word document.");
-            return "";
-        }
-    }
 
         async function extractTextFromDocx(file) {
             const arrayBuffer = await file.arrayBuffer();
@@ -232,19 +203,19 @@
                 return;
             }
 
-            const prompt = Using the following job description: \n\n${jobDescription}\n\n Format the following CV to meet all requirements of job description and enhance its appeal to increase the chances of being hired:\n\n${cvText};
+            const prompt = `Using the following job description: \n\n${jobDescription}\n\n Format the following CV to meet all requirements of job description and enhance its appeal to increase the chances of being hired:\n\n${cvText} \n\n   give me the new CV as perfect as possible to maximize the chances of being chosen`;
 
             try {
                 const response = await fetch("https://api.cohere.ai/v1/generate", {
                     method: "POST",
                     headers: {
-                        "Authorization": Bearer LIKR6AGC89QCRUyaxIGGnzvxzofYOx6gRCOjDX97,
+                        "Authorization": `Bearer LIKR6AGC89QCRUyaxIGGnzvxzofYOx6gRCOjDX97`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
                         model: "command-xlarge",
                         prompt: prompt,
-                        max_tokens: 50000
+                        max_tokens: 500000
                     })
                 });
 
