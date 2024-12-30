@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="twitter:title" content="OpenCreativity" />
+    <meta name="twitter:description" content="Unleashing boundless creativity, where ideas ignite, connect, and inspire like never before—limitless, vibrant, and unforgettable." />
+    <meta name="twitter:image" content="OpenCreativity.png" />
+    <link rel="icon" type="image/ico" href="OpenCreativity.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+ <title>Food Analyser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-y: auto; /* Allow scrolling */
+        }
+
+        main {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 900px;
+            min-height: 400px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+
+        .image-container {
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #1DB954;
+            border: none;
+            color: white;
+            font-size: 18px;
+            padding: 14px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(29, 185, 84, 0.5);
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #17a14e;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(29, 185, 84, 0.7);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .file-input-container {
+            margin-top: 30px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label {
+            background-color: #2575fc;
+            padding: 14px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        label:hover {
+            background-color: #1e66c0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .result-container {
+            margin-top: 40px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-container h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .result-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .result-container ul li {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .excellent {
+            color: #388e3c; /* Green color for excellent results */
+            font-weight: bold;
+        }
+
+        .good {
+            color: #66bb6a; /* Lighter green for good results */
+            font-weight: bold;
+        }
+
+        .okay {
+            color: #fbc02d; /* Yellow for okay results */
+            font-weight: bold;
+        }
+
+        .not-recommended {
+            color: #f57c00; /* Orange for not recommended results */
+            font-weight: bold;
+        }
+
+        .bad {
+            color: #d32f2f; /* Red for bad results */
+            font-weight: bold;
+        }
+
+        /* Loading Screen */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            display: none; /* Hidden by default */
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            .image-container img {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <main>
+        <h1>Food Analysis</h1>
+
+        <!-- Image Preview Section -->
+        <div class="image-container">
+            <img id="food-image" src="" alt="Uploaded Food Image" style="display: none;">
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="file-input-container">
+            <input type="file" id="file-input" onchange="handleFile(event)">
+            <label for="file-input">Upload Image</label>
+        </div>
+
+        <!-- Analyze Button -->
+        <button onclick="extractAndAnalyzeText()">Analyze Food</button>
+
+        <!-- Result Display Section -->
+        <div class="result-container" id="result-container" style="display: none;">
+            <h3 id="result-heading"></h3>
+            <ul id="result-list"></ul>
+        </div>
+    </main>
+
+    <script>
+        let img;
+
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                img = file;
+                document.getElementById('food-image').src = URL.createObjectURL(img);
+                document.getElementById('food-image').style.display = 'block';
+            } else {
+                alert('Please upload a valid image file');
+            }
+        }
+
+        async function extractAndAnalyzeText() {
+            if (!img) {
+                alert('Please upload an image first.');
+                return;
+            }
+
+            // Show loading animation
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            // Convert image to base64
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Image = reader.result.split(',')[1]; // Extract base64 string
+
+                // OCR API to extract text
+                const apiKey = 'K84790897688957'; // Your OCR API key
+                const apiEndpoint = 'https://api.ocr.space/parse/image';
+                const formData = new FormData();
+                formData.append('apikey', apiKey);
+                formData.append('base64Image', `data:image/png;base64,${base64Image}`);
+
+                try {
+                    const ocrResponse = await fetch(apiEndpoint, {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    const ocrData = await ocrResponse.json();
+
+                    if (ocrData.ParsedResults && ocrData.ParsedResults.length > 0) {
+                        const extractedText = ocrData.ParsedResults[0].ParsedText;
+                        analyzeFoodWithCohere(extractedText);
+                    } else {
+                        alert('No text detected in the image.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the image.');
+                }
+            };
+            reader.readAsDataURL(img);
+        }
+
+        async function analyzeFoodWithCohere(extractedText) {
+            const apiKey = 'LIKR6AGC89QCRUyaxIGGnzvxzofYOx6gRCOjDX97'; // Cohere API key
+            const apiUrl = 'https://api.cohere.ai/v1/generate';
+
+            const prompt = `You are a professional nutritionist. Analyze the following food ingredients and determine the suitability of the food for consumption. Classify the food into one of the following categories: Excellent, Good, Okay, Not Recommended, or Bad. Provide a summary stating your classification followed by the ingredients that support your conclusion: ${extractedText}`;
+
+            const payload = {
+                model: 'command-xlarge', // Cohere model name
+                prompt: prompt,
+                max_tokens: 500, // Adjust token limit as needed
+            };
+
+            const headers = {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json();
+
+                if (data && data.generations && data.generations[0] && data.generations[0].text) {
+                    const analysisResult = data.generations[0].text;
+                    displayAnalysisResult(analysisResult);
+                } else {
+                    alert('No valid analysis result.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing the food.');
+            }
+        }
+
+        function displayAnalysisResult(analysisResult) {
+            const resultContainer = document.getElementById('result-container');
+            const resultHeading = document.getElementById('result-heading');
+            const resultList = document.getElementById('result-list');
+
+            resultContainer.style.display = 'block';
+            resultHeading.textContent = classifyResult(analysisResult);
+
+            // Clear previous results
+            resultList.innerHTML = '';
+
+            // Convert bullet points in the result text
+            const points = analysisResult.split('\n');
+            points.forEach(point => {
+                if (point.trim()) {
+                    const li = document.createElement('li');
+                    li.textContent = point.trim();
+                    resultList.appendChild(li);
+                }
+            });
+
+            // Hide loading animation
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        function classifyResult(analysisText) {
+            if (analysisText.includes('Excellent')) {
+                return 'Excellent Product';
+            } else if (analysisText.includes('Good')) {
+                return 'Good Product';
+            } else if (analysisText.includes('Okay')) {
+                return 'Okay Product';
+            } else if (analysisText.includes('Not Recommended')) {
+                return 'Not Recommended';
+            } else {
+                return 'Bad Product';
+            }
+        }
+    </script>
+</body>
+</html>
