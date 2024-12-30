@@ -242,58 +242,96 @@
     <script>
         let img;
 
-        function handleFile(event) {
-            const file = event.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                img = file;
-                document.getElementById('food-image').src = URL.createObjectURL(img);
-                document.getElementById('food-image').style.display = 'block';
+
+function handleFile(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        img = file;
+        document.getElementById('food-image').src = URL.createObjectURL(img);
+        document.getElementById('food-image').style.display = 'block';
+    } else {
+        alert('Please upload a valid image file');
+    }
+}
+
+async function extractAndAnalyzeText() {
+    if (!img) {
+        alert('Please upload an image first.');
+        return;
+    }
+
+    // Show loading animation
+    document.getElementById('loading-overlay').style.display = 'flex';
+
+    // Convert image to base64 after resizing
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+        const base64Image = reader.result.split(',')[1]; // Extract base64 string
+
+        // Resize the image before sending it to OCR API
+        const resizedImage = await resizeImage(base64Image, 800, 800); // Resize to 1000x1000 (Adjust as needed)
+
+        // OCR API to extract text
+        const apiKey = 'K84790897688957'; // Your OCR API key
+        const apiEndpoint = 'https://api.ocr.space/parse/image';
+        const formData = new FormData();
+        formData.append('apikey', apiKey);
+        formData.append('base64Image', `data:image/png;base64,${resizedImage}`);
+
+        try {
+            const ocrResponse = await fetch(apiEndpoint, {
+                method: 'POST',
+                body: formData,
+            });
+            const ocrData = await ocrResponse.json();
+
+            if (ocrData.ParsedResults && ocrData.ParsedResults.length > 0) {
+                const extractedText = ocrData.ParsedResults[0].ParsedText;
+                analyzeFoodWithCohere(extractedText);
             } else {
-                alert('Please upload a valid image file');
+                alert('No text detected in the image.');
             }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while processing the image.');
         }
+    };
+    reader.readAsDataURL(img);
+}
 
-        async function extractAndAnalyzeText() {
-            if (!img) {
-                alert('Please upload an image first.');
-                return;
+async function resizeImage(base64Image, maxWidth, maxHeight) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = `data:image/png;base64,${base64Image}`;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Calculate the new dimensions
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+                const scaleFactor = Math.min(maxWidth / width, maxHeight / height);
+                width = width * scaleFactor;
+                height = height * scaleFactor;
             }
 
-            // Show loading animation
-            document.getElementById('loading-overlay').style.display = 'flex';
+            // Set the canvas size to the new dimensions
+            canvas.width = width;
+            canvas.height = height;
 
-            // Convert image to base64
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const base64Image = reader.result.split(',')[1]; // Extract base64 string
+            // Draw the image on the canvas
+            ctx.drawImage(img, 0, 0, width, height);
 
-                // OCR API to extract text
-                const apiKey = 'K84790897688957'; // Your OCR API key
-                const apiEndpoint = 'https://api.ocr.space/parse/image';
-                const formData = new FormData();
-                formData.append('apikey', apiKey);
-                formData.append('base64Image', `data:image/png;base64,${base64Image}`);
+            // Get the resized image as Base64
+            const resizedBase64 = canvas.toDataURL('image/png');
+            resolve(resizedBase64.split(',')[1]); // Return only the base64 string
+        };
+        img.onerror = reject;
+    });
+}
 
-                try {
-                    const ocrResponse = await fetch(apiEndpoint, {
-                        method: 'POST',
-                        body: formData,
-                    });
-                    const ocrData = await ocrResponse.json();
-
-                    if (ocrData.ParsedResults && ocrData.ParsedResults.length > 0) {
-                        const extractedText = ocrData.ParsedResults[0].ParsedText;
-                        analyzeFoodWithCohere(extractedText);
-                    } else {
-                        alert('No text detected in the image.');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing the image.');
-                }
-            };
-            reader.readAsDataURL(img);
-        }
 
         async function analyzeFoodWithCohere(extractedText) {
             const apiKey = 'LIKR6AGC89QCRUyaxIGGnzvxzofYOx6gRCOjDX97'; // Cohere API key
